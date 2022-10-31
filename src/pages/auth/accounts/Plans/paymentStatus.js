@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useHistory } from 'react-router-dom';
-import { CloudFunctions } from "../../../../components/FirebaseAuth/firebase";
+// import { CloudFunctions } from "../../../../components/FirebaseAuth/firebase";
 import {
     Alert, CircularProgress, Container, Button
   } from "@mui/material";

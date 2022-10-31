@@ -1,0 +1,5 @@
+{
+    "format": "html",
+    "subject": "New Induction Payment",
+    "body": "<p>Dear HKN board members: </p><p>ticket validity: {{is_valid}}, user allowed: {{is_allowed}}</p><p>Received a payment from PayPal for {{user}} with the amount of ${{payment_amount}} on {{payment_date}}, and the tx status is {{payment_status}}.</p><p>Transaction ID: {{txn_id}}</p><p>This update is being propagated, and a payment confirmation receipt has been sent to {{user_email}}.</p><p>Debug info - account_id: {{account_id}}, plan_id: {{plan_id}}</p>"
+}

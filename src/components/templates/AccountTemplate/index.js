@@ -25,7 +25,7 @@ const AccountTemplate = ({ role, allowInactive, children }) => {
         const accountRef = FirebaseAuth.firestore().doc('accounts/'+accountId);
         accountRef.get().then(doc => {
             if(doc.exists){
-                sub_status = doc.data().subscriptionStatus;
+                let sub_status = doc.data().subscriptionStatus;
                 if(sub_status && (sub_status==='active' || sub_status==='paid' || sub_status==="Completed")){
                     setIsActive(true);
                 }

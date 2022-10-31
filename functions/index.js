@@ -1126,8 +1126,8 @@ async function publishMessage(messageConfig) {
 exports.processPaypal = functions.pubsub.topic('paypal').onPublish((message) => {
     console.log("[PayPal PubSub 1]");
     // Check request for validity/tamper
-    let paypalEndpoint = "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr" // TESTING - Sandbox API
-    // let paypalEndpoint = "https://ipnpb.paypal.com/cgi-bin/webscr" // Production API
+    // let paypalEndpoint = "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr" // TESTING - Sandbox API
+    let paypalEndpoint = "https://ipnpb.paypal.com/cgi-bin/webscr" // Production API
     // const paramsPP = new url.URLSearchParams(message.json);
     const paramsPP = new url.URLSearchParams({ cmd: "_notify-validate" });
     for (const [key, value] of Object.entries(message.json)) {
@@ -1180,7 +1180,7 @@ exports.paypalWebhook = functions.https.onRequest((req, res) => {
 const sendDebug = (obj) => {
     // For testing:
     const params = new url.URLSearchParams(obj);
-    return axios.post('http://mockbin.org/bin/70197ad1-59cf-4390-8a18-19cac28a73e0', params.toString())
+    return axios.post('', params.toString())
     .then(function (response) {
       console.log("Debug Send Success");
       // console.log(response);
@@ -1206,7 +1206,7 @@ const updateCheckoutPayPal = (checkoutObject, isValid) => {
     console.log("userNameEmail: ", userInfoExtend);
     console.log("paymentDate: ", payment_date);
     return Promise.all([
-        sendDebug(checkoutObject), // for debug only!
+        // sendDebug(checkoutObject), // for debug only!
         getDoc("/accounts/" + account_id),
         getDoc("/plans/" + plan_id),
         isInAllowList(plan_id, account_id),

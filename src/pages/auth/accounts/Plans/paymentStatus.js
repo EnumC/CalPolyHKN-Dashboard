@@ -1,12 +1,10 @@
-import { useState, useEffect, useContext } from "react";
-import { useHistory } from 'react-router-dom';
-import { CloudFunctions } from "../../../../components/FirebaseAuth/firebase";
-import {
-    Alert, CircularProgress, Container, Button
-  } from "@mui/material";
-import { BreadcrumbContext } from "../../../../components/Breadcrumb";
-import { AuthContext } from "../../../../components/FirebaseAuth";
+import {Alert, Button, CircularProgress, Container} from "@mui/material";
+import {useContext, useEffect, useState} from "react";
+import {useHistory} from 'react-router-dom';
 
+import {BreadcrumbContext} from "../../../../components/Breadcrumb";
+import {AuthContext} from "../../../../components/FirebaseAuth";
+import {CloudFunctions} from "../../../../components/FirebaseAuth/firebase";
 
 const PaymentStatus = () => {
   const [message, setMessage] = useState(null);

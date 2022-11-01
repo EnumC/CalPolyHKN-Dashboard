@@ -103,7 +103,7 @@ const Plans = () => {
           features: doc.data().features,
           stripePriceId: doc.data().stripePriceId,
           type: doc.data().type,
-          current: (userData.currentAccount.planId === doc.id && (userData.currentAccount.subscriptionStatus === 'active' || userData.currentAccount.subscriptionStatus === 'paid' )) ? true : false,
+          current: (userData.currentAccount.planId === doc.id && (userData.currentAccount.subscriptionStatus === 'active' || userData.currentAccount.subscriptionStatus === 'paid' || userData.currentAccount.subscriptionStatus === 'Completed')) ? true : false,
         });
       });
       if (p.length > 0) {

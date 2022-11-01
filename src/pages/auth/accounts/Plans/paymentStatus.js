@@ -1,74 +1,86 @@
-import {Alert, Button, CircularProgress, Container} from "@mui/material";
-import {useContext, useEffect, useState} from "react";
-import {useHistory} from 'react-router-dom';
+import { Alert, Button, CircularProgress, Container } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
-import {BreadcrumbContext} from "../../../../components/Breadcrumb";
-import {AuthContext} from "../../../../components/FirebaseAuth";
-import {CloudFunctions} from "../../../../components/FirebaseAuth/firebase";
+import { BreadcrumbContext } from "../../../../components/Breadcrumb";
+import { AuthContext } from "../../../../components/FirebaseAuth";
+import { CloudFunctions } from "../../../../components/FirebaseAuth/firebase";
 
 const PaymentStatus = () => {
   const [message, setMessage] = useState(null);
   const { setBreadcrumb } = useContext(BreadcrumbContext);
   const { userData } = useContext(AuthContext);
   const title = "Payment Status";
-  const history = useHistory();   
-    
-    useEffect(() => {setBreadcrumb([
-        {
-          to: "/",
-          text: "Home",
-          active: false,
-        },
-        {
-          to: "/account/" + userData.currentAccount.id + "/",
-          text: userData.currentAccount.name,
-          active: false,
-        },
-        {
-          to: null,
-          text: title,
-          active: true,
-        },
-      ]);
-      const getCheckoutData = async (event) => {
-        const sessionIdParam = new URLSearchParams(window.location.search);
-        // const checkoutSession = CloudFunctions.httpsCallable("checkoutSession");
-        if (message === null) {
-            // checkoutSession({
-            //     sessionId: sessionIdParam,
-            //   }).then((res) => {
-            //     console.log("checkoutSession: ", res);
-            //     if (res.data.result === "success") {
-            //         setMessage("payment_status: " + res.data.data.payment_status);
-            //     } else {
-            //       console.error("checkoutSession returned result", res);
-            //       setMessage(JSON.stringify(res));
-            //     }
-            //   });
-            if (sessionIdParam.get("payment_status") === "Completed") {
-              setMessage("Complete. You will receive an email confirmation with additional details.");
-            }
-            else if (sessionIdParam.get("payment_status") === "Pending") {
-              setMessage("Your transaction is pending.");
-            }
-            else {
-              setMessage("Your transaction is " + sessionIdParam.get("payment_status") + ".");
-            }
-            console.log(sessionIdParam.toString())
-          };
+  const history = useHistory();
+
+  useEffect(() => {
+    setBreadcrumb([
+      {
+        to: "/",
+        text: "Home",
+        active: false,
+      },
+      {
+        to: "/account/" + userData.currentAccount.id + "/",
+        text: userData.currentAccount.name,
+        active: false,
+      },
+      {
+        to: null,
+        text: title,
+        active: true,
+      },
+    ]);
+    const getCheckoutData = async (event) => {
+      const sessionIdParam = new URLSearchParams(window.location.search);
+      // const checkoutSession = CloudFunctions.httpsCallable("checkoutSession");
+      if (message === null) {
+        // checkoutSession({
+        //     sessionId: sessionIdParam,
+        //   }).then((res) => {
+        //     console.log("checkoutSession: ", res);
+        //     if (res.data.result === "success") {
+        //         setMessage("payment_status: " + res.data.data.payment_status);
+        //     } else {
+        //       console.error("checkoutSession returned result", res);
+        //       setMessage(JSON.stringify(res));
+        //     }
+        //   });
+        if (sessionIdParam.get("payment_status") === "Completed") {
+          setMessage(
+            "Complete. You will receive an email confirmation with additional details."
+          );
+        } else if (sessionIdParam.get("payment_status") === "Pending") {
+          setMessage("Your transaction is pending.");
+        } else {
+          setMessage(
+            "Your transaction is " + sessionIdParam.get("payment_status") + "."
+          );
+        }
+        console.log(sessionIdParam.toString());
       }
-      getCheckoutData();}, [setBreadcrumb, userData, message]);
+    };
+    getCheckoutData();
+  }, [setBreadcrumb, userData, message]);
   return (
-      <>Payment Status
+    <>
+      Payment Status
       {message !== null && (
         <Container>
           <Alert severity="info">
             {message}
             <br />
-            Please note that it may take 5 to 15 minutes for your account status to be updated.
+            Please note that it may take 5 to 15 minutes for your account status
+            to be updated.
           </Alert>
           <br />
-          <Button variant="contained" color="primary" onClick={() => history.push('/')}>Back To Account Overview</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => history.push("/")}
+          >
+            Back To Account Overview
+          </Button>
         </Container>
       )}
       {message === null && (
@@ -76,8 +88,8 @@ const PaymentStatus = () => {
           <br />
           <CircularProgress />
         </Container>
-        
-      )}</>
+      )}
+    </>
   );
 };
 

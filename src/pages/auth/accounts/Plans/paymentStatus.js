@@ -33,24 +33,32 @@ const PaymentStatus = () => {
         },
       ]);
       const getCheckoutData = async (event) => {
-        const sessionIdParam = new URLSearchParams(window.location.search).get(
-          "session_id"
-        );
-        const checkoutSession = CloudFunctions.httpsCallable("checkoutSession");
+        const sessionIdParam = new URLSearchParams(window.location.search);
+        // const checkoutSession = CloudFunctions.httpsCallable("checkoutSession");
         if (message === null) {
-            checkoutSession({
-                sessionId: sessionIdParam,
-              }).then((res) => {
-                console.log("checkoutSession: ", res);
-                if (res.data.result === "success") {
-                    setMessage("payment_status: " + res.data.data.payment_status);
-                } else {
-                  console.error("checkoutSession returned result", res);
-                  setMessage(JSON.stringify(res));
-                }
-              });
-            };
-        }
+            // checkoutSession({
+            //     sessionId: sessionIdParam,
+            //   }).then((res) => {
+            //     console.log("checkoutSession: ", res);
+            //     if (res.data.result === "success") {
+            //         setMessage("payment_status: " + res.data.data.payment_status);
+            //     } else {
+            //       console.error("checkoutSession returned result", res);
+            //       setMessage(JSON.stringify(res));
+            //     }
+            //   });
+            if (sessionIdParam.get("payment_status") === "Completed") {
+              setMessage("Complete. You will receive an email confirmation with additional details.");
+            }
+            else if (sessionIdParam.get("payment_status") === "Pending") {
+              setMessage("Your transaction is pending.");
+            }
+            else {
+              setMessage("Your transaction is " + sessionIdParam.get("payment_status") + ".");
+            }
+            console.log(sessionIdParam.toString())
+          };
+      }
       getCheckoutData();}, [setBreadcrumb, userData, message]);
   return (
       <>Payment Status

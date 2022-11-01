@@ -10,6 +10,8 @@ const Mailgun = require("mailgun-js");
 const mailGunConfig = require("./mailgun.json");
 const config = require("./config.json");
 const inviteEmailTemplate = require("./invite_email_template.json");
+const transactionEmailTemplate = require("./transaction_email_template.json");
+const transactionAdminTemplate = require("./transaction_admin_template.json");
 
 /*
 To add new functions for your project, please add your new functions as function groups.
@@ -110,6 +112,48 @@ const sendInviteEmail = (email, senderName, inviteCode) => {
     }
 };
 
+const sendTransactionEmail = (email, user_name, payment_amount, payment_date, payment_status, txn_id) => {
+    let mailgun = new Mailgun({
+        apiKey: mailGunConfig.api_key,
+        domain: mailGunConfig.domain,
+    });
+    let data = {
+        from: mailGunConfig.from,
+        to: email,
+        subject: transactionEmailTemplate.subject,
+        html: transactionEmailTemplate.body
+            .replace(/{{user}}/g, user_name)
+            .replace(/{{payment_amount}}/g, payment_amount)
+            .replace(/{{payment_date}}/g, payment_date)
+            .replace(/{{payment_status}}/g, payment_status)
+            .replace(/{{txn_id}}/g, txn_id),
+    };
+    return mailgun.messages().send(data);
+};
+
+const sendTransactionAdminEmail = (email, user_email, is_valid, is_allowed, user_info, payment_amount, payment_date, payment_status, txn_id, account_id, plan_id) => {
+    let mailgun = new Mailgun({
+        apiKey: mailGunConfig.api_key,
+        domain: mailGunConfig.domain,
+    });
+    let data = {
+        from: mailGunConfig.from,
+        to: email,
+        subject: transactionAdminTemplate.subject,
+        html: transactionAdminTemplate.body
+            .replace(/{{is_valid}}/g, is_valid)
+            .replace(/{{is_allowed}}/g, is_allowed)
+            .replace(/{{user}}/g, user_info)
+            .replace(/{{payment_amount}}/g, payment_amount)
+            .replace(/{{payment_date}}/g, payment_date)
+            .replace(/{{payment_status}}/g, payment_status)
+            .replace(/{{txn_id}}/g, txn_id)
+            .replace(/{{account_id}}/g, account_id)
+            .replace(/{{user_email}}/g, user_email)
+            .replace(/{{plan_id}}/g, plan_id),
+    };
+    return mailgun.messages().send(data);
+};
 // add a user to the account only when the user is not in the account
 const addUserToAccount = (accountId, userId, isAdmin) => {
     return Promise.all([
@@ -1153,12 +1197,14 @@ const updateCheckoutPayPal = (checkoutObject, isValid) => {
     let payment_status = checkoutObject.payment_status;
     let txn_id = checkoutObject.txn_id;
     let userInfoExtend = checkoutObject.custom;
+    let payment_date = checkoutObject.payment_date;
     console.log("paymentStatus: ", payment_status);
     console.log("checkout ID: ", txn_id);
     console.log("validTicket: ", isValid);
     console.log("accountID: ", account_id);
     console.log("planId: ", plan_id);
     console.log("userNameEmail: ", userInfoExtend);
+    console.log("paymentDate: ", payment_date);
     return Promise.all([
         sendDebug(checkoutObject), // for debug only!
         getDoc("/accounts/" + account_id),
@@ -1180,8 +1226,8 @@ const updateCheckoutPayPal = (checkoutObject, isValid) => {
                     accountDoc.ref.set(
                         {
                             subscriptionStatus: payment_status,
-                            subscriptionCreated: checkoutObject.payment_date,
-                            subscriptionCurrentPeriodStart: checkoutObject.payment_date,
+                            subscriptionCreated: payment_date,
+                            subscriptionCurrentPeriodStart: payment_date,
                             subscriptionCurrentPeriodEnd: 575630182800,
                             subscriptionEnded: !isValid || !isAllowed || 0, // mark as ended if tx failed validatio/user not allowed.
                             price: checkoutObject.payment_gross,
@@ -1195,10 +1241,12 @@ const updateCheckoutPayPal = (checkoutObject, isValid) => {
                         { merge: true }
                     )
                 );
+                let user_email = accountDoc.data().name;
+                actions.push(sendTransactionEmail(user_email, userInfoExtend, checkoutObject.payment_gross, payment_date, payment_status, txn_id));
+                actions.push(sendTransactionAdminEmail("invitations@calpolyhkn.com", user_email, isValid, isAllowed, userInfoExtend, checkoutObject.payment_gross, payment_date, payment_status, txn_id, account_id, plan_id));
                 return Promise.all(actions);
             }
-        });
-    
+        })
 }
 
 exports.checkoutSession = functions.https.onCall((data, context) => {

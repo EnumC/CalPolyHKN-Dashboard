@@ -1,0 +1,5 @@
+{
+    "format": "html",
+    "subject": "IEEE-HKN - Your Membership",
+    "body": "<p>Hi {{user}}:<br /><br />Congratulations on become an inductee of IEEE-HKN. As an inductee of IEEE-HKN, you are also a member of IEEE, the world's largest technical professional organization. You are in a unique position to stay ahead of technology trends, learn new skills, and get involved in a global community innovating for a better tomorrow. IEEE and IEEE-HKN will be there as your trusted resources.<br /><br />Your payment to Associated Students, Inc. (ASI) of the amount ${{payment_amount}} on {{payment_date}} is {{payment_status}}. <br />If you have any questions regarding this notice, please contact the chapter treasurer and provide the transaction confirmation id: {{txn_id}}<br /> <br />See you soon!</p>"
+}
